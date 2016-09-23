@@ -19,6 +19,7 @@ FocusScope {
             height: contactInfo.height*2
             color: ListView.isCurrentItem ? "black" : "red"
             property string prova_name: ListView.isCurrentItem ? contactInfo.text : ""
+            property bool mouse_click
             Text {
                 y: 0
                 id: contactInfo
@@ -26,15 +27,59 @@ FocusScope {
 
                 color: wrapper.ListView.isCurrentItem ? "red" : "black"
             }
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    console.log("Click del mouse - x="+mouseX.toString()+" e y="+mouseY.toString()+" indice "+index)
+                    // listV_user.currentIndex = listV_user.indexAt(mouseX,mouseY)
+                    // wrapper.ListView.view.currentIndex = index
+                    listV_user.currentIndex = index
+                    // item.DelegateModel.inSelected = !item.DelegateModel.inSelected
+                    //password_text.focus = true
+                    //password_text.enabled = true
+                    //scope.focus = true
+                    wrapper.mouse_click = true
+                }
+            }
             FocusScope {
+                id: scope
+
+
+                focus: false
+                onFocusChanged: {
+                    console.log("FocusScope ! - Cambiato il Focus!! - Current: "+listV_user.currentIndex+" Select: "+index)
+                    //listV_user.currentIndex = index
+                }
+
+                onActiveFocusChanged: {
+                    console.log("Active Focus Chaged!! - Current: "+listV_user.currentIndex+" Select: "+index)
+                }
+
                 TextInput {
                     y:10
                     width: 200
                     id: password_text
+                    focus: true
                     text: "listV_user password"
                     color: wrapper.ListView.isCurrentItem ? "red" : "black"
                     onTextChanged: {
                         textUserPassword = text
+                    }
+
+
+                    onFocusChanged: {
+                        console.log("TextInput! - Cambiato il Focus!! - Current: "+listV_user.currentIndex+" Select: "+index)
+                    }
+
+                    onActiveFocusOnPressChanged: {
+                        console.log("TextInput - Active on Press!! - Current: "+listV_user.currentIndex+" Select: "+index)
+                    }
+
+                    onActiveFocusChanged: {
+                        console.log("TextInput - Active!! - Current: "+listV_user.currentIndex+" Select: "+index)
+                        console.log("TextInput - Active Focus value: "+activeFocus)
+                        listV_user.currentIndex = index
                     }
 
                     Keys.onPressed: {
@@ -45,20 +90,6 @@ FocusScope {
                             // textUserPassword = text
                         }
                     }
-                }
-
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    console.log("Click del mouse - x="+mouseX.toString()+" e y="+mouseY.toString()+" indice "+listV_user.indexAt(mouseX,mouseY))
-                    // listV_user.currentIndex = listV_user.indexAt(mouseX,mouseY)
-                    // wrapper.ListView.view.currentIndex = index
-                    listV_user.currentIndex = index
-                    // item.DelegateModel.inSelected = !item.DelegateModel.inSelected
-                    password_text.focus = true
-                    password_text.enabled = true
                 }
             }
         }

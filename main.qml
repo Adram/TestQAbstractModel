@@ -21,12 +21,41 @@ Rectangle {
 //      delegate: Text { text: "Animal: " + type + ", " + size }
 
 
-//  }
+    //  }
 
     Rectangle {
         anchors.fill: parent
         color: "transparent"
+        anchors.rightMargin: 0
+        anchors.bottomMargin: 0
+        anchors.leftMargin: 0
+        anchors.topMargin: 0
 
+        Rectangle{
+            x: 0; y: 0; width: 200; height: 228; color: "yellow"
+
+            MouseArea {
+                id: mouseArea1
+                x: 15
+                y: 109
+                width: 100
+                height: 100
+                onClicked: {
+                    console.log("Click del mouse - x="+mouseX.toString()+" e y="+mouseY.toString())
+                }
+
+            }
+
+            FocusScope {
+                id: focusScope1
+                x: 15
+                y: 8
+                width: 100
+                height: 100
+
+            }
+
+        }
 
         Image {
             id: rectangle
