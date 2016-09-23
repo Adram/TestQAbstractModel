@@ -26,8 +26,10 @@ int main(int argc, char *argv[])
     QQuickView view;
     UserModel *user_list = new UserModel();
     AnimalModel *animal_list = new AnimalModel();
-    QSortFilterProxyModel *m_proxyModel = new QSortFilterProxyModel();
-    SortFilterModel *m_sort_filterModel = new SortFilterModel();
+    //QSortFilterProxyModel *m_proxyModel = new QSortFilterProxyModel();
+    //SortFilterModel *m_sort_filterModel = new SortFilterModel();
+    SortFilterModel *m_proxyModel = new SortFilterModel();
+    QSortFilterProxyModel *m_sort_filterModel = new QSortFilterProxyModel();
 
 
     animal_list->addAnimal(Animal("Zolf", "Medium"));
