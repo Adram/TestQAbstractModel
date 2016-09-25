@@ -4,6 +4,8 @@ FocusScope {
     id: root
     property string textUserValue
     property string textUserPassword
+    property bool indice_cambiato: false
+    property bool text_name_cambiato_da_text: false
 
     //PictureBox {
     //    id: pictureDelegate
@@ -19,6 +21,7 @@ FocusScope {
             height: contactInfo.height*2
             color: ListView.isCurrentItem ? "black" : "red"
             property string prova_name: ListView.isCurrentItem ? contactInfo.text : ""
+            property alias testo_input_cam: password_text.testo_input_cambiato
             property bool mouse_click
             Text {
                 y: 0
@@ -31,15 +34,15 @@ FocusScope {
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                    console.log("Click del mouse - x="+mouseX.toString()+" e y="+mouseY.toString()+" indice "+index)
-                    // listV_user.currentIndex = listV_user.indexAt(mouseX,mouseY)
-                    // wrapper.ListView.view.currentIndex = index
+                    console.log("MouseArea - indice: "+index)
                     listV_user.currentIndex = index
                     // item.DelegateModel.inSelected = !item.DelegateModel.inSelected
                     //password_text.focus = true
                     //password_text.enabled = true
                     //scope.focus = true
                     wrapper.mouse_click = true
+                    text_name_cambiato_da_text = true
+                    text_name.text = text_under.text
                 }
             }
             FocusScope {
@@ -48,12 +51,11 @@ FocusScope {
 
                 focus: false
                 onFocusChanged: {
-                    console.log("FocusScope ! - Cambiato il Focus!! - Current: "+listV_user.currentIndex+" Select: "+index)
-                    //listV_user.currentIndex = index
+                    console.log("FocusScope - FocusChanged! - Current: "+listV_user.currentIndex+" Select: "+index)
                 }
 
                 onActiveFocusChanged: {
-                    console.log("Active Focus Chaged!! - Current: "+listV_user.currentIndex+" Select: "+index)
+                    console.log("FocusScope - ActiveFocusChaged!! - Current: "+listV_user.currentIndex+" Select: "+index)
                 }
 
                 TextInput {
@@ -63,23 +65,31 @@ FocusScope {
                     focus: true
                     text: "listV_user password"
                     color: wrapper.ListView.isCurrentItem ? "red" : "black"
+                    property bool testo_input_cambiato: false
                     onTextChanged: {
                         textUserPassword = text
                     }
 
-
                     onFocusChanged: {
-                        console.log("TextInput! - Cambiato il Focus!! - Current: "+listV_user.currentIndex+" Select: "+index)
+                        console.log("TextInput! - FocusChanged! - Current: "+listV_user.currentIndex+" Select: "+index)
                     }
 
                     onActiveFocusOnPressChanged: {
-                        console.log("TextInput - Active on Press!! - Current: "+listV_user.currentIndex+" Select: "+index)
+                        console.log("TextInput - ActiveFocusOnPressChanged! - Current: "+listV_user.currentIndex+" Select: "+index)
                     }
 
                     onActiveFocusChanged: {
-                        console.log("TextInput - Active!! - Current: "+listV_user.currentIndex+" Select: "+index)
-                        console.log("TextInput - Active Focus value: "+activeFocus)
-                        listV_user.currentIndex = index
+                        console.log("TextInput - ActiveFocusChanged! - Current: "+listV_user.currentIndex+" Select: "+index)
+                        console.log("TextInput - ActiveFocusChanged! - ActiveFocus: "+activeFocus)
+                        if(activeFocus) {
+
+                            indice_cambiato = true
+                            listV_user.currentIndex = index
+                            console.log("TextInput - ActiveFocusChanged! - After Index Changed ActiveFocus: "+activeFocus)
+                            forceActiveFocus()
+                            text_name_cambiato_da_text = true
+                            text_name.text = text_under.text
+                        }
                     }
 
                     Keys.onPressed: {
@@ -112,23 +122,30 @@ FocusScope {
         onCurrentItemChanged: {
             if (currentItem) {
                 text_under.text = currentItem.prova_name
+                currentItem.testo_input_cam = true
+                // errore currentItem.password_text.testo_input_cambiato = true
             }
         }
         onCurrentIndexChanged: {
-            console.log("Indice cambiato!")
+            console.log("ListView - CurrentIndexChanged! - Current: "+currentIndex+" ActiveFocus: "+activeFocus)
             if (currentIndex == -1) {
-                console.log("Indice a -1")
                 text_under.text = ""
                 // text_under_index.text = ""
             }
             else {
-                console.log("Indice a " + currentIndex.toString())
+                console.log("ListView - CurrentIndexChanged! - Before Current: "+currentIndex)
 
                 if(text_name.testo_cambiato) {
                     text_name.testo_cambiato = false
                     currentIndex = 0
                 }
+                console.log("ListView - CurrentIndexChanged! - After Current: "+currentIndex)
             }
+            if (indice_cambiato) {
+                console.log("ListView - CurrentIndexChanged! - Cambiato da TextInput")
+                indice_cambiato = false
+            }
+
         }
     }
 
@@ -170,19 +187,24 @@ FocusScope {
         onTextChanged: {
             console.log("Testo cambiato!")
             //myModel.setFilterRegExp("^"+text)
-            mySortModel.setFilterRegExp("^"+text)
-            //listV_user.visible = true
-            //listV_animal.visible = true
+            if(!text_name_cambiato_da_text) {
+
+                mySortModel.setFilterRegExp("^"+text)
+                testo_cambiato = true
+            }
+            else {
+                text_name_cambiato_da_text = false
+            }
+
+
             textUserValue = text
 
-            testo_cambiato = true
 
             if(text == "") {
                 if(listV_user.currentItem)
                 {
                     console.log("Testo cambiato - indice a: " + listV_user.currentIndex.toString())
                     console.log("Testo cambiato - a nullo!")
-                    //listV_user.currentIndex = 0
                 }
             }
             else {
@@ -190,7 +212,6 @@ FocusScope {
                 {
                     console.log("Testo cambiato - indice a: " + listV_user.currentIndex.toString())
                     console.log("Testo cambiato - a: " + text)
-                    //listV_user.currentIndex = 0
                 }
             }
         }
@@ -219,6 +240,7 @@ FocusScope {
                 console.log("Tasto giù")
                 event.accepted = true;
                 listV_user.incrementCurrentIndex()
+                console.log("Tasto giù - after")
             }
             if((event.key == Qt.Key_Enter) || (event.key == Qt.Key_Return)) {
                 console.log("Tasto Enter / Return")
