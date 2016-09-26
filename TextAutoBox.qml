@@ -18,17 +18,28 @@ FocusScope {
         Rectangle {
             id: wrapper
             width: 200
-            height: contactInfo.height*2
+            // height: contactInfo.height*3
+            height: listV_user.height/6
             color: ListView.isCurrentItem ? "black" : "red"
             property string prova_name: ListView.isCurrentItem ? contactInfo.text : ""
             property alias testo_input_cam: password_text.testo_input_cambiato
             property bool mouse_click
+
+
             Text {
-                y: 0
                 id: contactInfo
+                //y: 0
+                anchors {
+                    left: parent.left; leftMargin: 0
+                    right: parent.right; rightMargin: 0
+                    top: parent.top; topMargin: 0
+                }
+
                 text: name
+                font { pixelSize: 14; bold: true }
 
                 color: wrapper.ListView.isCurrentItem ? "red" : "black"
+
             }
 
             MouseArea {
@@ -59,10 +70,15 @@ FocusScope {
                 }
 
                 TextInput {
-                    y:10
-                    width: 200
+                    //y:20; width: 200
+                    anchors {
+                        left: parent.left; leftMargin: 0
+                        right: parent.right; rightMargin: 0
+                        top: parent.top; topMargin: 20
+                    }
                     id: password_text
                     focus: true
+                    font { pixelSize: 14; bold: true }
                     text: "listV_user password"
                     color: wrapper.ListView.isCurrentItem ? "red" : "black"
                     property bool testo_input_cambiato: false
@@ -107,17 +123,17 @@ FocusScope {
 
     ListView {
         id: listV_user
-        //anchors.horizontalCenter: parent.horizontalCenter
         y: 40
-        width: 300; height: 100
+        width: 200; height: root.height - 150
 
+        anchors.top: parent.top
 
 
         model: mySortModel
         //delegate: Text { text: name}
         //delegate: pictureDelegate
         delegate: contactsDelegateT
-
+        spacing: 5
 
         onCurrentItemChanged: {
             if (currentItem) {
@@ -149,13 +165,21 @@ FocusScope {
         }
     }
 
+    ScrollBar {
+        id: scroll_listV_user
+
+        orientation: Qt.Vertical
+        height: listV_user.height;
+        width: 8
+        scrollArea: listV_user;
+        anchors.right: listV_user.right
+    }
 
     Text {
         id: text_under
 
-        y: 240
-        width: 200
-        height: 20
+        y: 340; width: 200; height: 20
+
         color: "#c7c1c1"
         clip: true
 
@@ -165,9 +189,9 @@ FocusScope {
     TextInput {
         id: text_name
 
-        y: 240
-        width: 200
-        height: 20
+        y: 340; width: 200; height: 20
+
+
         clip: true
         //text: qsTr("Sono qui!!")
         //inputMask: qsTr("")

@@ -3,5 +3,7 @@
         <file>main.qml</file>
         <file>TextAutoBox.qml</file>
         <file>PictureBox.qml</file>
+        <file>ScrollBar.qml</file>
+        <file>scrollbar.png</file>
     </qresource>
 </RCC>

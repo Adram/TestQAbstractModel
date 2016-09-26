@@ -86,7 +86,7 @@ Rectangle {
 
                 Column {
                     width: parent.width
-                    height: 280   // , mainColumn.implicitHeight + 350)
+                    height: 350   // , mainColumn.implicitHeight + 350)
                     //spacing: 4
 
                     TextAutoBox {
@@ -94,6 +94,7 @@ Rectangle {
 
                         id: text_user_name
                         KeyNavigation.backtab: text_generic; KeyNavigation.tab: text_pswd
+                        height: parent.height
 
                         //text: "User Text"
                         Keys.onEnterPressed: {
