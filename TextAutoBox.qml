@@ -5,21 +5,23 @@ FocusScope {
     property string textUserValue
     property string textUserPassword
     property bool indice_cambiato: false
-    property bool text_name_cambiato_da_text: false
+    property bool text_name_cambiato_da_list: false
 
     //PictureBox {
     //    id: pictureDelegate
     //    model_name: listV_user.model.name
     //}
 
+
     Component {
         id: contactsDelegateT
+
 
         Rectangle {
             id: wrapper
             width: 200
             // height: contactInfo.height*3
-            height: listV_user.height/6
+            height: listV_user.height/7
             color: ListView.isCurrentItem ? "black" : "red"
             property string prova_name: ListView.isCurrentItem ? contactInfo.text : ""
             property alias testo_input_cam: password_text.testo_input_cambiato
@@ -30,9 +32,9 @@ FocusScope {
                 id: contactInfo
                 //y: 0
                 anchors {
-                    left: parent.left; leftMargin: 0
-                    right: parent.right; rightMargin: 0
-                    top: parent.top; topMargin: 0
+                    left: parent.left; leftMargin: 2
+                    right: parent.right; rightMargin: 2
+                    top: parent.top; topMargin: 2
                 }
 
                 text: name
@@ -52,8 +54,9 @@ FocusScope {
                     //password_text.enabled = true
                     //scope.focus = true
                     wrapper.mouse_click = true
-                    text_name_cambiato_da_text = true
+                    text_name_cambiato_da_list = true
                     text_name.text = text_under.text
+                    listV_user.forceActiveFocus()
                 }
             }
             FocusScope {
@@ -70,15 +73,10 @@ FocusScope {
                 }
 
                 TextInput {
-                    //y:20; width: 200
-                    anchors {
-                        left: parent.left; leftMargin: 0
-                        right: parent.right; rightMargin: 0
-                        top: parent.top; topMargin: 20
-                    }
+                    y:20; width: 200
                     id: password_text
                     focus: true
-                    font { pixelSize: 14; bold: true }
+                    font { pixelSize: 14 }
                     text: "listV_user password"
                     color: wrapper.ListView.isCurrentItem ? "red" : "black"
                     property bool testo_input_cambiato: false
@@ -103,7 +101,7 @@ FocusScope {
                             listV_user.currentIndex = index
                             console.log("TextInput - ActiveFocusChanged! - After Index Changed ActiveFocus: "+activeFocus)
                             forceActiveFocus()
-                            text_name_cambiato_da_text = true
+                            text_name_cambiato_da_list = true
                             text_name.text = text_under.text
                         }
                     }
@@ -124,11 +122,21 @@ FocusScope {
     ListView {
         id: listV_user
         y: 40
-        width: 200; height: root.height - 150
+        property bool stato_indice_scroll: false
+        width: 200; height: root.height - 80
 
         anchors.top: parent.top
 
+        //boundsBehavior: Flickable.StopAtBounds
+        //boundsBehavior: Flickable.DragOverBounds
+        //boundsBehavior: Flickable.OvershootBounds
+        //contentWidth: width-50; contentHeight: height-50
 
+        maximumFlickVelocity: 250
+
+        clip: true
+
+        focus: true
         model: mySortModel
         //delegate: Text { text: name}
         //delegate: pictureDelegate
@@ -136,7 +144,9 @@ FocusScope {
         spacing: 5
 
         onCurrentItemChanged: {
+            console.log("ListView - CurrentItemChanged! - Current: "+currentIndex+" ActiveFocus: "+activeFocus)
             if (currentItem) {
+                console.log("ListView - CurrentItemChanged! - Modifica text_under")
                 text_under.text = currentItem.prova_name
                 currentItem.testo_input_cam = true
                 // errore currentItem.password_text.testo_input_cambiato = true
@@ -144,6 +154,10 @@ FocusScope {
         }
         onCurrentIndexChanged: {
             console.log("ListView - CurrentIndexChanged! - Current: "+currentIndex+" ActiveFocus: "+activeFocus)
+            console.log("ListView - Before scroll")
+            stato_indice_scroll = true
+            console.log("ListView - After scroll")
+            stato_indice_scroll = false
             if (currentIndex == -1) {
                 text_under.text = ""
                 // text_under_index.text = ""
@@ -155,6 +169,12 @@ FocusScope {
                     text_name.testo_cambiato = false
                     currentIndex = 0
                 }
+                //else {
+                    //disabilitare il filtraggio a seguito del cambiamento del testo
+                //    text_name.text = currentItem.prova_name
+
+                //}
+
                 console.log("ListView - CurrentIndexChanged! - After Current: "+currentIndex)
             }
             if (indice_cambiato) {
@@ -178,7 +198,10 @@ FocusScope {
     Text {
         id: text_under
 
-        y: 340; width: 200; height: 20
+        anchors.top: listV_user.bottom
+        anchors.topMargin: 10
+        //y: 300;
+        width: 200; height: 20
 
         color: "#c7c1c1"
         clip: true
@@ -189,7 +212,10 @@ FocusScope {
     TextInput {
         id: text_name
 
-        y: 340; width: 200; height: 20
+        anchors.top: listV_user.bottom
+        anchors.topMargin: 10
+        //y: 300;
+        width: 200; height: 20
 
 
         clip: true
@@ -199,6 +225,7 @@ FocusScope {
         //font.pixelSize: 12
 
         property bool testo_cambiato: false
+        property bool filter_on: true
 
 
         focus: true
@@ -211,13 +238,17 @@ FocusScope {
         onTextChanged: {
             console.log("Testo cambiato!")
             //myModel.setFilterRegExp("^"+text)
-            if(!text_name_cambiato_da_text) {
+            if(!text_name_cambiato_da_list) {
 
-                mySortModel.setFilterRegExp("^"+text)
-                testo_cambiato = true
+                //if(filter_on) {
+                    mySortModel.setFilterRegExp("^"+text)
+                    testo_cambiato = true
+                    filter_on = false
+                //}
+
             }
             else {
-                text_name_cambiato_da_text = false
+                text_name_cambiato_da_list = false
             }
 
 
@@ -243,9 +274,11 @@ FocusScope {
         Keys.onPressed: {
             console.log("Tasto premuto")
             testo_cambiato = false
+            filter_on = true
             if(event.key == Qt.Key_Right) {
                 console.log("Tasto destro")
 
+                filter_on = false
                 if ((listV_user.currentIndex != -1) &&
                     (((text != text_under.text) && (text != "")) ||
                      (text == "")
@@ -258,18 +291,23 @@ FocusScope {
             if(event.key == Qt.Key_Up) {
                 console.log("Tasto su")
                 event.accepted = true;
+                filter_on = false
                 listV_user.decrementCurrentIndex()
             }
             if(event.key == Qt.Key_Down) {
                 console.log("Tasto giù")
                 event.accepted = true;
+                filter_on = false
                 listV_user.incrementCurrentIndex()
                 console.log("Tasto giù - after")
             }
             if((event.key == Qt.Key_Enter) || (event.key == Qt.Key_Return)) {
+                filter_on = false
                 console.log("Tasto Enter / Return")
                 // event.accepted = true;
             }
         }
     }
+
+
 }

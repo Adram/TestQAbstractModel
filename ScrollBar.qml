@@ -90,7 +90,14 @@ Item {
             return nh + ny;
     }
 
+    function stato_scroll() {
+        console.log("ScrollBar")
+        return scrollArea.stato_indice_scroll || scrollArea.moving
+
+    }
+
     Rectangle { anchors.fill: parent; color: "Black"; opacity: 0.3 }
+
 
     BorderImage {
         source: "scrollbar.png"
@@ -103,9 +110,11 @@ Item {
 
     states: State {
         name: "visible"
-        when: container.orientation == Qt.Vertical ?
-                  scrollArea.movingVertically :
-                  scrollArea.movingHorizontally
+        when: stato_scroll()
+        //when: scrollArea.stato_indice_scroll || scrollArea.moving
+        //when: container.orientation == Qt.Vertical ?
+        //          scrollArea.movingVertically :
+        //          scrollArea.movingHorizontally
         PropertyChanges { target: container; opacity: 1.0 }
     }
 

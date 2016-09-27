@@ -27,9 +27,9 @@ Rectangle {
         anchors.fill: parent
         color: "transparent"
         anchors.rightMargin: 0
-        anchors.bottomMargin: 0
+        anchors.bottomMargin: 20
         anchors.leftMargin: 0
-        anchors.topMargin: 0
+        anchors.topMargin: 20
 
         Rectangle{
             x: 0; y: 0; width: 200; height: 228; color: "yellow"
@@ -85,7 +85,7 @@ Rectangle {
                     }
 
                 Column {
-                    width: parent.width
+                    width: 200 //parent.width
                     height: 350   // , mainColumn.implicitHeight + 350)
                     //spacing: 4
 
@@ -95,7 +95,9 @@ Rectangle {
                         id: text_user_name
                         KeyNavigation.backtab: text_generic; KeyNavigation.tab: text_pswd
                         height: parent.height
+                        width: 200
 
+                        focus: true
                         //text: "User Text"
                         Keys.onEnterPressed: {
                             //text_generic.text = textUserValue
@@ -105,7 +107,6 @@ Rectangle {
                             text_generic.text = textUserValue
                             text_pswd.text = textUserPassword
                         }
-
                     }
                 }
 
